@@ -122,8 +122,15 @@ function get_order_by_id(Request $request, Response $response, $args){
     $statement->bindValue(":id", $order_number);
     $statement->execute();
     $order = $statement->fetch(PDO::FETCH_ASSOC);
-    $statement->closeCursor();
-    return json_encode($order);
+    if ($order == NULL){
+        $errorJSON = '{"error":{"text":"NOT FOUND"}}';
+        error_log("server error $errorJSON");
+        return $response->withStatus(404)  //client error
+        ->write($errorJSON);
+    }else {
+        $statement->closeCursor();
+        return json_encode($order);
+    }
 }
 function get_all_orders(Request $request, Response $response){
     error_log("server get_orders");
