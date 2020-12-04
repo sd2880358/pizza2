@@ -1,0 +1,1 @@
+curl -v -X DELETE http://localhost/cs637/eoneil1/ch05_gs/ch05_gs_server/api/categories/guitars/products/3

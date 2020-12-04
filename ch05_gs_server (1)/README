@@ -1,0 +1,23 @@
+README for ch05_gs_server
+
+This project is set up to be installed at /cs637/username/ch05_gs_server
+relative to the document root, where username is your pe07 username.
+
+On pe07, this project is meant to be installed at
+/var/www/html/cs637/username/ch05_gs_server.
+You have private access to this area using UNIX file permissions,
+just as you have private access to your ~/cs637 directory area.
+
+To be ready to run this project, you need to edit in your
+pe07 username in just one place in these sources, api/index.php,
+as explained in a comment in that file.
+
+You also need to make sure the guitarshop database is loaded--see
+the files in the database directory.
+
+Note that Netbeans will put a red exclamation point on the vendor directory
+because one of its modules, called pimple, doesn't validate to Netbean's
+satisfaction. It will also mark brokenproduct.json this way, because it's
+bad JSON, intentionally. Don't worry about these markings.
+
+

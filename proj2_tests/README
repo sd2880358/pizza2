@@ -1,0 +1,20 @@
+Scripts for testing project 2
+These will be used for grading the project, but they should be useful
+in development too. 
+
+Use the .sh version for Linux and Mac (use chmod +x *.sh first)
+Use the .cmd version for Windows
+
+Usage:
+On topcat or Mac: running servertest1.sh to test username's proj2_server:
+servertest1.sh username  (after chmod +x *.sh)
+
+On development Windows PC system, with project at
+   htdocs/cs637/username/pizza2_server:
+servertest1 username
+
+servertest1: day, toppings, sizes, users
+servertest2: get and place orders, some with problems
+servertest3: update order, get order 1
+
+ch05_gs_server: subdirectory with some scripts for the provided server
