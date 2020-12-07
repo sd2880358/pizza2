@@ -299,9 +299,16 @@ function add_toppings_to_orders($db, $id, $toppings){
 
 function change_status(Request $request, Response $response, $args){
     $order_number = $args['id'];
+    $orders = $request->getParsedBody();
+    $status = $orders['status'];
+    echo ($status);
     error_log("server change_status");
     $db = getConnection();
-    $sql = 'UPDATE pizza_orders SET status=\'Baked\' WHERE status=\'Preparing\' and id=:id';
+    if ($status === "Baked") {
+        $sql = 'UPDATE pizza_orders SET status=\'Baked\' WHERE status=\'Preparing\' and id=:id';
+    }elseif ($status === 'Finished'){
+        $sql = 'UPDATE pizza_orders SET status=\'Finished\' WHERE status=\'Baked\' and id=:id';
+    }
     $statement = $db->prepare($sql);
     $statement->bindValue(':id', $order_number);
     $statement->execute();

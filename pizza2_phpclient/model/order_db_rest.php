@@ -31,6 +31,7 @@ function update_to_finished($db, $user_id) {
     foreach ($orders as $order) {
         error_log("found Baked order, upd to finished...");
         $order['status'] = 'Finished';
+        echo($order['status']);
         rest_put_order($httpClient, $base_url, $order);
     }
 }
