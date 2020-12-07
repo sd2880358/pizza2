@@ -14,7 +14,7 @@
             </li>
             <li>
                 <h2>For Students</h2>
-                <a href="pizza">Pizza Shop for Students</a>
+                <a href="../pizza2_phpclient/pizza">Pizza Shop for Students</a>
             </li>
         </ul>
     </section>

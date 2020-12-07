@@ -24,7 +24,7 @@
             <nav>
                 <ul>
                     <li><a href="<?php echo $app_path ?>">Home</a></li>
-                    <li><a href="<?php echo $app_path ?>pizza/">Student Orders</a></li>   
+                    <li><a href="<?php echo $app_path ?>../pizza2_phpclient/pizza/">Student Orders</a></li>
                 </ul>
             </nav>
         </header>
