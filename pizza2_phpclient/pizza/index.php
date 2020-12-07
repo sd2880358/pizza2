@@ -3,7 +3,7 @@ require('../model/web_services.php');
 require('../model/order_db_rest.php');
 require('../model/topping_db_rest.php');
 require('../model/size_db_rest.php');
-// require('../model/day_db_rest.php');
+require('../model/day_db_rest.php');
 require('../model/user_db_rest.php');
 $db = 1; //fake $db to keep old code happy
 
@@ -49,7 +49,7 @@ if ($action == 'student_welcome'|| $action == 'set_user') {
 } elseif ($action == 'add_order') {
     $size = filter_input(INPUT_POST, 'pizza_size');
     try {
-        $current_day = 1;  // TODO get current day properly
+        $current_day = get_current_day($db);
     } catch (Exception $e) {
         $error_message = $e->getMessage();
         include('../errors/error.php');

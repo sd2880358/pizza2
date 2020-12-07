@@ -5,7 +5,7 @@
    to the web server's document root.
 -->
 <!-- CHANGE xxxx to your own pe07 username-->
-<?php $app_path = "/cs637/donghao_li/pizza1/"; ?>
+<?php $app_path = "/cs637/donghao/pizza1/"; ?>
 <!DOCTYPE html>
 <html> 
     <head>

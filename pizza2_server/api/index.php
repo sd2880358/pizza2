@@ -90,6 +90,7 @@ $app->get('/orders/{order}', 'get_order_by_id');
 $app->get('/orders', 'get_all_orders');
 $app->post('/orders', "postOrders");
 $app->put('/orders/{id}', 'change_status');
+$app->get('/toppings/{id}', 'get_topping_by_id');
 // Take over response to URLs that don't match above rules, to avoid sending
 // HTML back in these cases
 $app->map(['GET', 'POST', 'PUT', 'DELETE'], '/{routes:.+}', function($req, $res) {
@@ -121,7 +122,9 @@ function get_order_by_id(Request $request, Response $response, $args){
     $statement = $db->prepare($sql);
     $statement->bindValue(":id", $order_number);
     $statement->execute();
-    $order = $statement->fetch(PDO::FETCH_ASSOC);
+    $order = $statement->fetch();
+    $topping = get_order_toppings($db, $order_number);
+    $order['topping'] = $topping;
     if ($order == NULL){
         $errorJSON = '{"error":{"text":"NOT FOUND"}}';
         error_log("server error $errorJSON");
@@ -132,45 +135,71 @@ function get_order_by_id(Request $request, Response $response, $args){
         return json_encode($order);
     }
 }
+function get_topping_by_id(Request $request, Response $response, $args){
+    $id = $args['id'];
+    error_log("server get_topping_by_id");
+    $db = getConnection();
+    $sql = "SELECT * FROM menu_toppings where id = :id";
+    $statement = $db->prepare($sql);
+    $statement->bindValue(":id", $id);
+    $statement->execute();
+    $topping = $statement->fetch();
+    if ($topping == NULL){
+        $errorJSON = '{"error":{"text":"NOT FOUND"}}';
+        error_log("server error $errorJSON");
+        return $response->withStatus(404)  //client error
+        ->write($errorJSON);
+    }else {
+        $statement->closeCursor();
+        return json_encode($topping);
+    }
+}
 function get_all_orders(Request $request, Response $response){
     error_log("server get_orders");
     $db = getConnection();
     $sql = "SELECT * FROM pizza_orders";
     $statement = $db->prepare($sql);
     $statement->execute();
-    $orders = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $orders = $statement->fetchAll();
+    $order_list = array();
+    foreach ($orders as $order){
+        $order_id = $order['id'];
+        $order_topping = get_order_toppings($db, $order_id);
+        $order['toppings'] = $order_topping;
+        $order_list[] = $order;
+    }
     $statement->closeCursor();
-    return json_encode($orders);
+    return json_encode($order_list);
 }
 function getToppings(Request $request, Response $response){
     error_log("server getToppings");
-    $sql = "SELECT topping FROM menu_toppings";
+    $sql = "SELECT * FROM menu_toppings";
     $db = getConnection();
     $stmt = $db->prepare($sql);
     $stmt->execute();
-    $sizes = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $sizes = $stmt->fetchAll();
     $stmt->closeCursor();
     echo json_encode($sizes);
 }
 
 function getSizes(Request $request, Response $response){
     error_log("server getSizes");
-    $sql = "SELECT size FROM menu_sizes";
+    $sql = "SELECT * FROM menu_sizes";
     $db = getConnection();
     $stmt = $db->prepare($sql);
     $stmt->execute();
-    $sizes = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $sizes = $stmt->fetchAll();
     $stmt->closeCursor();
     echo json_encode($sizes);
 }
 
 function getUsers(Request $request, Response $response){
     error_log("server getUsers");
-    $sql = "SELECT username FROM shop_users";
+    $sql = "SELECT * FROM shop_users";
     $db = getConnection();
     $stmt = $db->prepare($sql);
     $stmt->execute();
-    $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $users = $stmt->fetchAll();
     $stmt->closeCursor();
     echo json_encode($users);
 }
@@ -196,6 +225,7 @@ function postOrders(Request $request, Response $response) {
         $db = getConnection();
         $id = addOrders($db, $orders['user_id'], $orders['size'], $orders['day'], $orders['status']);
         add_toppings_to_orders($db, $id, $orders['toppings']);
+        $orders['id'] = $id;
     } catch (PDOException $e) {
         // if duplicate product, blame client--
         if (strstr($e->getMessage(), 'SQLSTATE[23000]')) {
@@ -210,7 +240,7 @@ function postOrders(Request $request, Response $response) {
         }
     }
     $JSONcontent = json_encode($orders);
-    $location = $request->getUri() . '/' . $orders["id"];
+    $location = $request->getUri() . '/' . $orders["user_id"];
     return $response->withHeader('Location', $location)
         ->withStatus(200)
         ->write($JSONcontent);
@@ -276,4 +306,14 @@ function change_status(Request $request, Response $response, $args){
     $statement->bindValue(':id', $order_number);
     $statement->execute();
     $statement->closeCursor();
+}
+
+function get_order_toppings($db, $order_id){
+    $sql = "SELECT topping FROM order_topping WHERE order_id = :order_id";
+    $statement = $db->prepare($sql);
+    $statement->bindValue(':order_id', $order_id);
+    $statement->execute();
+    $toppings = $statement->fetchAll(PDO::FETCH_COLUMN);
+    $statement->closeCursor();
+    return $toppings;
 }

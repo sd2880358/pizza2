@@ -39,7 +39,6 @@
 
         <?php
         if (!empty($user_id) ):
-            
         if (count($user_preparing_orders) + count($user_baked_orders) == 0):
             echo 'No orders in progress for this user';
         else:
