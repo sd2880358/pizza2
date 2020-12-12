@@ -1,1 +1,1 @@
-{"id":"1","user_id":"2","size":"Large","day":"1","status":"Preparing","toppings":"Onions"]}
+{"user_id":"1","size":"Small","day":"2","status":"Preparing","toppings":["Onions","Pepperoni"]}

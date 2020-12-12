@@ -82,7 +82,7 @@ td, th {
     font-size: 1em;
     padding: .2em .5em .2em .5em;
     text-align: left;
-    width: 100%;
+    width: 100px;
 }
 
 .submitbutton {

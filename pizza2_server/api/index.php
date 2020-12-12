@@ -123,14 +123,14 @@ function get_order_by_id(Request $request, Response $response, $args){
     $statement->bindValue(":id", $order_number);
     $statement->execute();
     $order = $statement->fetch();
-    $topping = get_order_toppings($db, $order_number);
-    $order['topping'] = $topping;
     if ($order == NULL){
         $errorJSON = '{"error":{"text":"NOT FOUND"}}';
         error_log("server error $errorJSON");
         return $response->withStatus(404)  //client error
         ->write($errorJSON);
     }else {
+        $topping = get_order_toppings($db, $order_number);
+        $order['topping'] = $topping;
         $statement->closeCursor();
         return json_encode($order);
     }
@@ -160,7 +160,7 @@ function get_all_orders(Request $request, Response $response){
     $sql = "SELECT * FROM pizza_orders";
     $statement = $db->prepare($sql);
     $statement->execute();
-    $orders = $statement->fetchAll();
+    $orders = $statement->fetchAll(PDO::FETCH_ASSOC);
     $order_list = array();
     foreach ($orders as $order){
         $order_id = $order['id'];
@@ -216,7 +216,7 @@ function postOrders(Request $request, Response $response) {
     $orders = $request->getParsedBody();  // Slim does JSON_decode here
     error_log('server: parsed order = ' . print_r($orders, true));
     if ($orders == NULL) { // parse failed (bad JSON)
-        $errorJSON = '{"error":{"text":"bad JSON in request"}}';
+        $errorJSON = '{"error":{"text":"bad JSON in request"}}'. $orders;
         error_log("server error $errorJSON");
         return $response->withStatus(400)  //client error
         ->write($errorJSON);
@@ -313,6 +313,7 @@ function change_status(Request $request, Response $response, $args){
     $statement->bindValue(':id', $order_number);
     $statement->execute();
     $statement->closeCursor();
+    return (json_encode("test"));
 }
 
 function get_order_toppings($db, $order_id){

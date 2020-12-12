@@ -19,7 +19,7 @@ echo  -------------send bad-status order to server: should fail with HTTP 400
 curl -i -d @order_badstatus.json -H Content-Type:application/json  http://localhost/cs637/$1/pizza2_server/api/orders
 echo
 echo  -------------send bad-json order to server: should fail with HTTP 400
-curl -i -d @order_badjson.json -H Content-Type:application/json  http://localhost/cs637/$1/pizza2_server/api/orders
+curl -i -d @order_badjson.json -H Content-Type:application/json  http://localhost/cs637/donghao/pizza2_server/api/orders
 echo
 echo ---------------get all orders: should have one previously inserted
 curl http://localhost/cs637/$1/pizza2_server/api/orders
