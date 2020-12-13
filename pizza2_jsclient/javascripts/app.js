@@ -3,7 +3,7 @@
 /* global fetch, Promise */
 // use port 80, i.e., apache server for webservice execution 
 // Change localhost to localhost:8000 to use the tunnel to pe07's port 80
-const baseUrl = "http://localhost/cs637/donghao/pizza2_server/api";
+const baseUrl = "http://localhost:8000/cs637/donghao/pizza2_server/api";
 // globals representing state of data and UI
 let selectedUser = 'none';
 var selectedUserId;
