@@ -21,7 +21,6 @@ let main = function () {//(sizes, toppings, users, orders) {
     setupRefreshOrderListForm();
     setupAcknowledgeForm();
     displayOrders();
-    getDay();
     // for order tab--
     setupOrderForm();
     displaySizesToppingsOnOrderForm();
@@ -67,7 +66,6 @@ function setupUserForm() {
         document.getElementById('username-fillin1').innerHTML = selectedUser;
         document.getElementById('username-fillin2').innerHTML = selectedUser;
         document.getElementById("order-area").className = "active";
-        getOrders(() => displayOrders());
         displayOrders();
         event.preventDefault();
     });
@@ -109,7 +107,7 @@ function setupRefreshOrderListForm() {
     console.log("setupRefreshForm...");
     document.querySelector("#refreshbutton input").addEventListener("click", event => {
         console.log("refresh orders by user = " + selectedUser);
-        getOrders(() =>displayOrders());
+        getOrders(()=>displayOrders());
         event.preventDefault();
     });
 }
@@ -118,7 +116,7 @@ function setupRefreshOrderListForm() {
 function displayOrders() {
     console.log("displayOrders");
     document.getElementById("order-area").classList.remove("active");
-    if (selectedUser != "none") {
+    if (selectedUser !== "none") {
         const order_area = document.getElementById('order-area');
         order_area.className = "active";
         const order_by_user_id = orders.filter(order => order['user_id'] == selectedUserId);
@@ -191,6 +189,7 @@ function displayOrders() {
             }
         }
     }
+
 }
     // remove class "active" from the order-area
     // if selectedUser is "none", just return--nothing to do
@@ -237,9 +236,10 @@ function setupTabs() {
         test2[0].className = "tabContent active"
         event.preventDefault();
     })
-
+    test1[0].className = "active"
+    test2[0].className = "tabContent active"
     test1[1].addEventListener("click", event => {
-        if (selectedUser == "none") {
+        if (selectedUser === "none") {
             alert("please selected a user")
         } else {
             test1.forEach(function (element) {
@@ -335,12 +335,11 @@ function setupOrderForm() {
             order['toppings'] = selectedToppings;
             postOrder(order, function (element) {
                 let order_message = document.getElementById("order-message");
-                order_message.innerHTML = "Your pizza orderID is " + element;
-                getOrders(()=>displayOrders());
+                order_message.innerHTML = "Your pizza orderID is " + element.id;
+                orders.push(element)
+                displayOrders();
             });
         }
-        displayOrders();
-        displayOrders();
         event.preventDefault();
     }
     )
@@ -423,7 +422,7 @@ function getUsers() {
     return promise;
 }
 
-function getOrders() {
+function getOrders(fn) {
     let promise = fetch(
         baseUrl + "/orders",
         {method: 'GET'}
@@ -441,8 +440,9 @@ function getOrders() {
             console.log("back from fetch: %O", json);
             orders = json;
         })
+        .then(fn)
         .catch(error => console.error('error in getOrders:', error));
-    return promise;
+    return promise
 }
 function getDay(){
     let promise = fetch(
@@ -510,17 +510,17 @@ function postOrder(order, onSuccess) {
             })
         .then(json => {
             console.log("back from fetch: %O", json);
-            return json['id']
+            return json
         })
-        .then(id => {
-            onSuccess(id);
+        .then(order => {
+            onSuccess(order);
         })
         .catch(error => console.error('error in postOrder', error));
-    return promise;
+    return promise
 }
 function refreshData(thenFn) {
     // wait until all promises from fetches "resolve", i.e., finish fetching
-    Promise.all([getSizes(), getToppings(), getUsers(), getOrders()]).then(thenFn);
+    Promise.all([getSizes(), getToppings(), getUsers(), getOrders(), getDay()]).then(thenFn);
 }
 
 console.log("starting...");
