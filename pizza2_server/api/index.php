@@ -313,7 +313,6 @@ function change_status(Request $request, Response $response, $args){
     $statement->bindValue(':id', $order_number);
     $statement->execute();
     $statement->closeCursor();
-    return (json_encode("test"));
 }
 
 function get_order_toppings($db, $order_id){
